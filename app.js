@@ -18,7 +18,9 @@ const createVaultStmt = db.prepare("INSERT INTO vaults (username, keyHash, vault
 const express = require("express");
 const app = express();
 
-app.use(express.static("static"));
+if(process.env.SERVE_APP) {
+    app.use(express.static("static"));
+}
 app.use("/vault", express.json());
 
 app.post("/vault/sync", (req, res) => {

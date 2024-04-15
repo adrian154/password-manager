@@ -43,6 +43,10 @@ body {
     animation-duration: 1s;
 }
 
+.delete-link {
+    margin-right: 0;
+}
+
 @keyframes pulse-green {
     from { color: #00ff00; }
     to { color: #0000ff; }

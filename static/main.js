@@ -1,3 +1,7 @@
+const API_ROOT = "passwords.bithole.dev";
+const syncEndpoint = new URL("/vault/sync", API_ROOT),
+      createEndpoint = new URL("/vault/create", API_ROOT);
+
 // elements
 const unlockForm = document.getElementById("unlock-form"),
       unlockError = document.getElementById("unlock-error"),
@@ -70,7 +74,7 @@ const encryptAndCommit = async () => {
     window.localStorage.setItem("dirty"+keyHash, "dirty");
 
     // try to upload the vault
-    const req = await fetch("/vault/sync", {
+    const req = await fetch(syncEndpoint, {
         method: "POST",
         headers: {"content-type": "application/json"},
         body: JSON.stringify({
@@ -139,7 +143,7 @@ const initializeVault = async () => {
         counter = 1;
         const encrypted = await encryptLocalVault();
         try {
-            const req = await fetch("/vault/create", {
+            const req = await fetch(createEndpoint, {
                 method: "POST",
                 headers: {"content-type": "application/json"},
                 body: JSON.stringify({
@@ -177,7 +181,7 @@ const initializeVault = async () => {
         lastCounter = Number(window.localStorage.getItem("counter"+keyHash)) || -1;
         try {
 
-            const req = await fetch("/vault/sync", {
+            const req = await fetch(syncEndpoint, {
                 method: "POST",
                 headers: {"content-type": "application/json"},
                 body: JSON.stringify({username, keyHash, lastCounter})
@@ -213,7 +217,6 @@ const initializeVault = async () => {
         }
 
     }
-
 
 };
 
