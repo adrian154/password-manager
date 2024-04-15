@@ -70,8 +70,10 @@ const merge = (newerVault, newerCounter) => {
         // if we receive a newer version of an existing entry, replace it 
         const existingIdx = vault.content.entries.findIndex(e => e.name == entry.name),
               existing = vault.content.entries[existingIdx];
-        if(existing && existing.timestamp < entry.timestamp) {
-            vault.content.entries[existingIdx] = entry;
+        if(existing) {
+            if(existing.timestamp < entry.timestamp) {
+                vault.content.entries[existingIdx] = entry;
+            }
         } else {
             vault.content.entries.push(entry);
         }
