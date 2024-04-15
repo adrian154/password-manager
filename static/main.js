@@ -1,4 +1,4 @@
-const API_ROOT = "passwords.bithole.dev";
+const API_ROOT = "https://passwords.bithole.dev";
 const syncEndpoint = new URL("/vault/sync", API_ROOT),
       createEndpoint = new URL("/vault/create", API_ROOT);
 
