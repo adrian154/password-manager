@@ -1,12 +1,17 @@
 // elements
 const unlockForm = document.getElementById("unlock-form"),
-      usernameField = document.getElementById("username"),
-      passwordField = document.getElementById("password"),
       unlockError = document.getElementById("unlock-error"),
       saveError = document.getElementById("save-error"),
-      createNewCheckbox = document.getElementById("create-new"),
       savingMessage = document.getElementById("saving"),
-      vaultView = document.getElementById("vault-view");
+      vaultView = document.getElementById("vault-view"),
+      passwordsTable = document.getElementById("passwords-table"),
+      editorDialog = document.getElementById("editor"),
+      editorForm = document.getElementById("editor-form"),
+      entryName = document.getElementById("entry-name"),
+      entryUsername = document.getElementById("entry-username"),
+      entryEmail = document.getElementById("entry-email"),
+      entryPassword = document.getElementById("entry-password"),
+      entryUrl = document.getElementById("entry-url");
 
 const base64ToArrayBuf = base64 => Uint8Array.from(atob(base64), char => char.charCodeAt(0)).buffer;
 const arrayBufToBase64 = buf => btoa(Array.prototype.map.call(new Uint8Array(buf), byte => String.fromCharCode(byte)).join(""));
@@ -66,7 +71,7 @@ const encryptAndCommit = async () => {
     window.localStorage.setItem("dirty"+keyHash, "dirty");
 
     // try to upload the vault
-    const req = fetch("/vault", {
+    const req = await fetch("/vault/sync", {
         method: "POST",
         headers: {"content-type": "application/json"},
         body: JSON.stringify({
@@ -102,6 +107,7 @@ const commit = async () => {
     try {
         await encryptAndCommit();
     } catch(error) {
+        console.error(error);
         savingMessage.style.display = "";
         saveError.textContent = "Vault could not be uploaded to remote server";
     }
@@ -110,6 +116,9 @@ const commit = async () => {
 const showVaultView = () => {
     unlockForm.style.display = "none";
     vaultView.style.display = "";
+    for(const entry of vault.content.entries) {
+        addEntry(entry);
+    }
 };
 
 const loadLocalVault = async () => {
@@ -122,10 +131,12 @@ const initializeVault = async () => {
     unlockError.textContent = "";
 
     // if we want to create a new vault, initialize an empty vault and try to commit it
-    if(createNewCheckbox.checked) {
+    if(document.getElementById("create-new").checked) {
         vault = {
             iv: new Uint8Array(IV_LENGTH),
-            content: {}
+            content: {
+                entries: []
+            }
         };
         counter = 1;
         const encrypted = await encryptLocalVault();
@@ -212,19 +223,19 @@ unlockForm.addEventListener("submit", async event => {
     // keep page from reloading
     event.preventDefault();
 
-    username = usernameField.value;
+    username = document.getElementById("username").value;
 
     // derive master key from password
     const masterKeyBits = await window.crypto.subtle.deriveBits(
         {
             name: "PBKDF2",
             hash: "SHA-256",
-            salt: textEncoder.encode("bithole-passwords" + usernameField.value),
+            salt: textEncoder.encode("bithole-passwords" + username),
             iterations: 1_000_000
         },
         await window.crypto.subtle.importKey(
             "raw",
-            textEncoder.encode(passwordField.value),
+            textEncoder.encode(document.getElementById("password").value),
             "PBKDF2",
             false,
             ["deriveBits"] 
@@ -240,5 +251,129 @@ unlockForm.addEventListener("submit", async event => {
 
     initializeVault();
     unlockForm.reset();
+
+});
+
+// associate vault entries with UI elements
+const tableEntries = new Map();
+
+const refreshOrder = () => {
+    
+    // sort table entries lexicographically
+    const sorted = vault.content.entries.sort((a, b) => a.name.localeCompare(b.name));
+
+    for(let i = 0; i < sorted.length; i++) {
+        tableEntries.get(sorted[i]).style.order = i;
+    }
+
+};
+
+const addEntry = entry => {
+    
+    const elem = document.createElement("div");
+    tableEntries.set(entry, elem);
+    passwordsTable.append(elem);
+
+    const serviceName = document.createElement("span");
+    serviceName.classList.add("service-name");
+    serviceName.textContent = entry.name;
+    elem.append(serviceName);
+
+    const copyLinkOuter = document.createElement("span");
+    copyLinkOuter.classList.add("copy-link");
+    const copyLink = document.createElement("a");
+    copyLink.textContent = "copy";
+    copyLinkOuter.append(copyLink);
+    elem.append(copyLinkOuter);
+
+    const editLinkOuter = document.createElement("span");
+    editLinkOuter.classList.add("edit-link");
+    const editLink = document.createElement("a");
+    editLink.textContent = "edit";
+    editLinkOuter.append(editLink);
+    elem.append(editLink);
+
+    refreshOrder();
+
+};
+
+// modal state
+let editingEntry = null;
+
+editorDialog.addEventListener("close", () => {
+    editorForm.reset();
+    editingEntry = null;
+});
+
+document.getElementById("add-link").addEventListener("click", () => {
+    editorDialog.showModal();
+});
+
+document.getElementById("entry-cancel").addEventListener("click", () => {
+    editorDialog.close();
+    editorForm.reset();
+    editingEntry = null;
+});
+
+document.getElementById("autogen-password").addEventListener("click", () => {
+
+    let password = "";
+    const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const randomValues = new Uint32Array(16);
+    window.crypto.getRandomValues(randomValues);
+
+    for(let i = 0; i < 4; i++) {
+        for(let j = 0; j < 4; j++) {
+            password += alphabet[randomValues[i*4+j] % 36];
+        }
+        if(i < 3)
+            password += " ";
+    }
+
+    entryPassword.value = password;
+
+});
+
+editorForm.addEventListener("submit", event => {
+
+    // confirm overwrite
+    if(editingEntry && editingEntry.password != entryPassword.value) {
+        if(prompt(`You are about to overwrite an existing password. Please retype "${editingEntry.name}" to confirm your choice.`) != editingEntry.name) {
+            return;
+        }
+    }
+
+    // strip url
+    let url = "";
+    try {
+        url = new URL(entryUrl.value).origin;
+    } catch(error) {
+        // ignore error
+    }
+
+    if(editingEntry) {
+        editingEntry.name = entryName.value;
+        editingEntry.username = entryUsername.value;
+        editingEntry.email = entryEmail.value;
+        editingEntry.password = entryPassword.value;
+        entry.url = url;
+        entry.timestamp = Date.now();
+    } else {
+        const newEntry = {
+            name: entryName.value,
+            username: entryUsername.value,
+            email: entryEmail.value,
+            password: entryPassword.value,
+            url,
+            timestamp: Date.now()
+        }; 
+        vault.content.entries.push(newEntry);
+        addEntry(newEntry);
+    }
+
+    refreshOrder();
+    editorForm.reset();
+    editorDialog.close();
+    commit();
 
 });

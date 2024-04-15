@@ -1,3 +1,8 @@
+body {
+    max-width: 30em;
+    margin: auto;
+}
+
 #unlock-error, #save-error {
     color: #ff0000;
 }
@@ -5,4 +10,50 @@
 #saving {
     opacity: 50%;
     display: none;
+}
+
+#username, #password {
+    width: 100%;
+    margin: 0.5em 0;
+    padding: 0.5em;
+    box-sizing: border-box;
+}
+
+#passwords-table {
+    display: flex;
+    flex-direction: column;
+}
+
+#passwords-table > div {
+    display: flex;
+    flex-direction: row;
+    margin: 0.3em 0;
+}
+
+.service-name {
+    flex-grow: 1;
+}
+
+.copy-link, .edit-link {
+    margin: 0 0.5em;
+}
+
+#editor {
+    max-width: 20em;
+    border: none;
+}
+
+#editor input[type="text"] {
+    width: 100%;
+    margin-bottom: 1em;
+    box-sizing: border-box;
+}
+
+#editor::backdrop {
+    background-color: black;
+    opacity: 50%;
+}
+
+a, a:visited {
+    color: #0000ff;
 }

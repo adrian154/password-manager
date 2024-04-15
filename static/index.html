@@ -11,13 +11,36 @@
             <p id="unlock-error"></p>
             <input type="text" id="username" placeholder="Username..." required>
             <input type="password" id="password" placeholder="Password..." required>
-            <input type="checkbox" id="create-new"> <label for="create-new">Create new vault</label>
+            <input type="checkbox" id="create-new"> <label for="create-new">Create new vault</label><br><br>
             <button type="submit">Unlock</button>
         </form>
         <div id="vault-view" style="display: none">
             <p id="saving">saving...</p>
             <p id="save-error"></p>
+            <p style="display: flex; flex-direction: row;">
+                <span style="flex-grow: 1; font-weight: bold;">passwords</span>
+                <span><a id="add-link" href="#">+ add</a></span>
+            </p>
+            <div id="passwords-table"></div>
         </div>
+        <dialog id="editor">
+            <form id="editor-form">
+                <label for="entry-name">Name</label>
+                <input type="text" id="entry-name" required>
+                <label for="entry-username">Username</label>
+                <input type="text" id="entry-username">
+                <label for="entry-email">Email</label>
+                <input type="text" id="entry-email">
+                <label for="entry-password">Password</label>
+                <div style="display: flex; flex-direction: row; margin-bottom: 1em;">
+                    <input type="password" id="entry-password" style="flex-grow: 1; margin-right: 0.5em;">
+                    <button id="autogen-password" type="button">Generate</button>
+                </div>
+                <label for="entry-url">URL</label>
+                <input type="text" id="entry-url">
+                <button type="submit">Save</button> <button id="entry-cancel">Cancel</button>
+            </form>
+        </dialog>
         <script src="main.js"></script>
     </body>
 </html>
