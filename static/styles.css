@@ -38,6 +38,15 @@ body {
     margin: 0 0.5em;
 }
 
+.copy-link > a {
+    animation-duration: 1s;
+}
+
+@keyframes pulse-green {
+    from { color: #00ff00; }
+    to { color: #0000ff; }
+}
+
 #editor {
     max-width: 20em;
     border: none;

@@ -294,11 +294,9 @@ const addEntry = entry => {
     elem.append(editLink);
 
     copyLink.addEventListener("click", () => {
+        copyLink.style.animationName = "";
         navigator.clipboard.writeText(entry.password).then(() => {
-            copyLink.textContent = "copied!"
-            setTimeout(() => {
-                copyLink.textContent = "copy";
-            }, 1000);
+            copyLink.style.animationName = "pulse-green";
         });
     });
 
