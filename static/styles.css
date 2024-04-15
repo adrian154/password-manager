@@ -1,6 +1,7 @@
 body {
     max-width: 30em;
     margin: auto;
+    padding: 1em;
 }
 
 #unlock-error, #save-error {
@@ -34,7 +35,7 @@ body {
     flex-grow: 1;
 }
 
-.copy-link, .edit-link {
+.copy-link, .edit-link, .delete-link {
     margin: 0 0.5em;
 }
 

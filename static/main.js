@@ -293,6 +293,14 @@ const addEntry = entry => {
     editLinkOuter.append(editLink);
     elem.append(editLink);
 
+    const deleteLinkOuter = document.createElement("span");
+    deleteLinkOuter.classList.add("delete-link");
+    const deleteLink = document.createElement("a");
+    deleteLink.textContent = "delete";
+    deleteLink.href = "#";
+    deleteLinkOuter.append(deleteLink);
+    elem.append(deleteLinkOuter);
+
     copyLink.addEventListener("click", () => {
         copyLink.style.animationName = "";
         navigator.clipboard.writeText(entry.password).then(() => {
@@ -308,6 +316,16 @@ const addEntry = entry => {
         entryPassword.value = entry.password;
         entryUrl.value = entry.url;
         editorDialog.showModal();
+    });
+
+    deleteLink.addEventListener("click", () => {
+        if(prompt(`You are about to delete a saved password. This cannot be undone. Please retype "${entry.name}" to confirm your choice.`) != entry.name) {
+            return;
+        }
+        vault.content.entries = vault.content.entries.splice(vault.content.entries.index, 1);
+        tableEntries.delete(entry);
+        elem.remove();
+        commit();
     });
 
 };
@@ -353,7 +371,7 @@ editorForm.addEventListener("submit", event => {
 
     // confirm overwrite
     if(editingEntry && editingEntry.password != entryPassword.value) {
-        if(prompt(`You are about to overwrite an existing password. Please retype "${editingEntry.name}" to confirm your choice.`) != editingEntry.name) {
+        if(prompt(`You are about to overwrite an existing password. This cannot be undone. Please retype "${editingEntry.name}" to confirm your choice.`) != editingEntry.name) {
             return;
         }
     }
