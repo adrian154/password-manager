@@ -254,6 +254,7 @@ const handleUnlock = async () => {
 unlockForm.addEventListener("submit", event => {
     event.preventDefault();
     handleUnlock();
+    return false;
 });
 
 // associate vault entries with UI elements
