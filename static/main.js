@@ -2,7 +2,6 @@
 const unlockForm = document.getElementById("unlock-form"),
       unlockError = document.getElementById("unlock-error"),
       saveError = document.getElementById("save-error"),
-      savingMessage = document.getElementById("saving"),
       vaultView = document.getElementById("vault-view"),
       passwordsTable = document.getElementById("passwords-table"),
       editorDialog = document.getElementById("editor"),
@@ -102,13 +101,11 @@ const encryptAndCommit = async () => {
 };
 
 const commit = async () => {
-    savingMessage.style.display = "initial";
     saveError.textContent = "";
     try {
         await encryptAndCommit();
     } catch(error) {
         console.error(error);
-        savingMessage.style.display = "";
         saveError.textContent = "Vault could not be uploaded to remote server";
     }
 };
@@ -119,6 +116,7 @@ const showVaultView = () => {
     for(const entry of vault.content.entries) {
         addEntry(entry);
     }
+    refreshOrder();
 };
 
 const loadLocalVault = async () => {
@@ -154,7 +152,7 @@ const initializeVault = async () => {
                 throw new Error("Request failed");
             }
         } catch(error) {
-            unlockError.textContent = "Failed to upload vault; it may exist already.";
+            unlockError.textContent = "Failed to upload vault; it may exist already";
             return;
         }
         saveVault(encrypted);
@@ -166,7 +164,7 @@ const initializeVault = async () => {
         try {
             await loadLocalVault();
         } catch(error) {
-            unlockError.textContent = "Username or password is incorrect, or local vault is corrupted.";
+            unlockError.textContent = "Username or password is incorrect, or local vault is corrupted";
             return;
         }
 
@@ -192,7 +190,7 @@ const initializeVault = async () => {
                     saveVault(resp.latestVault);
                     showVaultView();
                 } else if(req.status == 404) {
-                    unlockError.textContent = "Username or password is incorrect.";
+                    unlockError.textContent = "Username or password is incorrect";
                 } else {
                     throw new Error("Request failed for unknown reasons");
                 }
@@ -206,9 +204,9 @@ const initializeVault = async () => {
             try {
                 await loadLocalVault();
                 showVaultView();
-                saveError.textContent = "Remote server could not be reached, so the last saved copy of the vault was loaded.";
+                saveError.textContent = "Remote server could not be reached, so the last saved copy of the vault was loaded";
             } catch(error) {
-                unlockError.textContent = "Vault unlock failed.";
+                unlockError.textContent = "Vault unlock failed";
             }
 
         }
@@ -283,6 +281,7 @@ const addEntry = entry => {
     copyLinkOuter.classList.add("copy-link");
     const copyLink = document.createElement("a");
     copyLink.textContent = "copy";
+    copyLink.href = "#";
     copyLinkOuter.append(copyLink);
     elem.append(copyLinkOuter);
 
@@ -290,10 +289,23 @@ const addEntry = entry => {
     editLinkOuter.classList.add("edit-link");
     const editLink = document.createElement("a");
     editLink.textContent = "edit";
+    editLink.href = "#";
     editLinkOuter.append(editLink);
     elem.append(editLink);
 
-    refreshOrder();
+    copyLink.addEventListener("click", () => {
+
+    });
+
+    editLink.addEventListener("click", () => {
+        editingEntry = entry;
+        entryName.value = entry.name;
+        entryUsername.value = entry.username;
+        entryEmail.value = entry.email;
+        entryPassword.value = entry.password;
+        entryUrl.value = entry.url;
+        editorDialog.showModal();
+    });
 
 };
 
@@ -356,8 +368,10 @@ editorForm.addEventListener("submit", event => {
         editingEntry.username = entryUsername.value;
         editingEntry.email = entryEmail.value;
         editingEntry.password = entryPassword.value;
-        entry.url = url;
-        entry.timestamp = Date.now();
+        editingEntry.url = url;
+        editingEntry.timestamp = Date.now();
+        const entryElement = tableEntries.get(editingEntry);
+        entryElement.querySelector(".service-name").textContent = entryName.value;
     } else {
         const newEntry = {
             name: entryName.value,
@@ -369,6 +383,7 @@ editorForm.addEventListener("submit", event => {
         }; 
         vault.content.entries.push(newEntry);
         addEntry(newEntry);
+        refreshOrder();
     }
 
     refreshOrder();
