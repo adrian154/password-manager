@@ -164,11 +164,12 @@ const initializeVault = async () => {
         try {
             await loadLocalVault();
         } catch(error) {
-            unlockError.textContent = "Username or password is incorrect, or local vault is corrupted";
+            unlockError.textContent = "Local vault is missing, try clearing the data for this site";
             return;
         }
 
         await commit();
+        showVaultView();
 
     } else {
 
@@ -322,7 +323,7 @@ const addEntry = entry => {
         if(prompt(`You are about to delete a saved password. This cannot be undone. Please retype "${entry.name}" to confirm your choice.`) != entry.name) {
             return;
         }
-        vault.content.entries = vault.content.entries.splice(vault.content.entries.index, 1);
+        vault.content.entries.splice(vault.content.entries.indexOf(entry), 1);
         tableEntries.delete(entry);
         elem.remove();
         commit();
