@@ -220,7 +220,11 @@ const initializeVault = async () => {
 
 };
 
-const handleUnlock = async () => {
+unlockForm.addEventListener("submit", async event => {
+    
+    // keep page from reloading
+    event.preventDefault();
+
     username = document.getElementById("username").value;
 
     // derive master key from password
@@ -249,11 +253,8 @@ const handleUnlock = async () => {
 
     initializeVault();
     unlockForm.reset();
-};
+    return false;
 
-unlockForm.addEventListener("submit", event => {
-    event.preventDefault();
-    handleUnlock();
 });
 
 // associate vault entries with UI elements
@@ -372,8 +373,6 @@ document.getElementById("autogen-password").addEventListener("click", () => {
 });
 
 editorForm.addEventListener("submit", event => {
-
-    event.preventDefault();
 
     // confirm overwrite
     if(editingEntry && editingEntry.password != entryPassword.value) {
