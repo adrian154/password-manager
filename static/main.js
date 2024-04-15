@@ -1,4 +1,5 @@
-const API_ROOT = "https://passwords.bithole.dev";
+//const API_ROOT = "https://passwords.bithole.dev";
+const API_ROOT = "http://localhost"
 const syncEndpoint = new URL("/vault/sync", API_ROOT),
       createEndpoint = new URL("/vault/create", API_ROOT);
 
@@ -62,8 +63,23 @@ const encryptLocalVault = async () => {
 };
 
 // merge() brings changes from a modified older vault to a newer vault
-const merge = async (newerVault, newerCounter) => {
-    // TODO
+const merge = (newerVault, newerCounter) => {
+
+    for(const entry of newerVault.content.entries) {
+        
+        // if we receive a newer version of an existing entry, replace it 
+        const existingIdx = vault.content.entries.findIndex(e => e.name == entry.name),
+              existing = vault.content.entries[existingIdx];
+        if(existing && existing.timestamp < entry.timestamp) {
+            vault.content.entries[existingIdx] = entry;
+        } else {
+            vault.content.entries.push(entry);
+        }
+
+    }
+
+    counter = newerCounter;
+
 };
 
 // the goal of commitChanges() is to bring the remote view of the vault into sync with the local view
@@ -374,11 +390,16 @@ document.getElementById("autogen-password").addEventListener("click", () => {
 
 editorForm.addEventListener("submit", event => {
 
+    event.preventDefault();
+
     // confirm overwrite
-    if(editingEntry && editingEntry.password != entryPassword.value) {
-        if(prompt(`You are about to overwrite an existing password. This cannot be undone. Please retype "${editingEntry.name}" to confirm your choice.`) != editingEntry.name) {
+    if(editingEntry) {
+        if(editingEntry.password != entryPassword.value && prompt(`You are about to overwrite an existing password. This cannot be undone. Please retype "${editingEntry.name}" to confirm your choice.`) != editingEntry.name) {
             return;
         }
+    } else if(vault.content.entries.find(entry => entry.name == entryName.value)) {
+        alert("An entry with that name exists already!");
+        return;
     }
 
     // strip url
@@ -416,5 +437,7 @@ editorForm.addEventListener("submit", event => {
     editorForm.reset();
     editorDialog.close();
     commit();
+
+    return false;
 
 });

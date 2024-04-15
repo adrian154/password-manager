@@ -1,4 +1,5 @@
 wishlist:
 * TOTP
-* specify domain; fetch icon
+* change password
+* fetch icon for domain
 * storing other types of data (recovery notes, credit cards)
