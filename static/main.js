@@ -253,6 +253,7 @@ unlockForm.addEventListener("submit", async event => {
 
     initializeVault();
     unlockForm.reset();
+    return false;
 
 });
 
