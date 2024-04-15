@@ -26,6 +26,11 @@ const decryptVault = async vault => {
     return {iv, content: JSON.parse(textDecoder.decode(plaintext))};
 };
 
+const saveVault = encrypted => {
+    window.localStorage.setItem("counter"+keyHash, counter);
+    window.localStorage.setItem("vault"+keyHash, encrypted);
+};
+
 const encryptLocalVault = async () => {
 
     // increment IV
@@ -53,16 +58,12 @@ const merge = async (newerVault, newerCounter) => {
     // TODO
 };
 
-// if a change is made to the vault, we record that there are changes not yet sent to the remote
-const markDirty = () => {
-    window.localStorage.setItem("dirty"+keyHash, "dirty");
-};
-
 // the goal of commitChanges() is to bring the remote view of the vault into sync with the local view
 const encryptAndCommit = async () => {
 
     const vaultStr = await encryptLocalVault();
     window.localStorage.setItem("vault"+keyHash, vaultStr);
+    window.localStorage.setItem("dirty"+keyHash, "dirty");
 
     // try to upload the vault
     const req = fetch("/vault", {
@@ -145,8 +146,7 @@ const initializeVault = async () => {
             unlockError.textContent = "Failed to upload vault; it may exist already.";
             return;
         }
-        window.localStorage.setItem("counter"+keyHash, counter);
-        window.localStorage.setItem("vault"+keyHash, encrypted);
+        saveVault(encrypted);
         showVaultView();
         return;
     } else if(window.localStorage.getItem("dirty"+keyHash) !== null) {
@@ -178,6 +178,7 @@ const initializeVault = async () => {
                 if(resp.conflict) {
                     vault = await decryptVault(resp.latestVault);
                     counter = resp.counter;
+                    saveVault(resp.latestVault);
                     showVaultView();
                 } else if(req.status == 404) {
                     unlockError.textContent = "Username or password is incorrect.";
@@ -187,6 +188,8 @@ const initializeVault = async () => {
             }
 
         } catch(error) {
+
+            console.error(error);
 
             // if that failed, load the local and warn the user
             try {
