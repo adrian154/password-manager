@@ -1,0 +1,8 @@
+#unlock-error, #save-error {
+    color: #ff0000;
+}
+
+#saving {
+    opacity: 50%;
+    display: none;
+}

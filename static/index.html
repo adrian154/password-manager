@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Passwords</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <form id="unlock-form">
+            <p id="unlock-error"></p>
+            <input type="text" id="username" placeholder="Username..." required>
+            <input type="password" id="password" placeholder="Password..." required>
+            <input type="checkbox" id="create-new"> <label for="create-new">Create new vault</label>
+            <button type="submit">Unlock</button>
+        </form>
+        <div id="vault-view" style="display: none">
+            <p id="saving">saving...</p>
+            <p id="save-error"></p>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>
