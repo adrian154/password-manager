@@ -28,7 +28,11 @@ body {
 #passwords-table > div {
     display: flex;
     flex-direction: row;
-    margin: 0.3em 0;
+    padding: 0.3em 0;
+}
+
+#passwords-table > div:hover {
+    background-color: rgba(0, 0, 0, 5%);
 }
 
 .service-name {
