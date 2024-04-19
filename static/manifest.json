@@ -1,0 +1,12 @@
+{
+    "name": "Passwords",
+    "icons": [
+        {
+            "src": "/password-manager/static/icon.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        }
+    ],
+    "display": "standalone",
+    "start_url": "/password-manager/static/"
+}

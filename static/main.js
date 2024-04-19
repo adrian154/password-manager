@@ -1,7 +1,6 @@
-const API_ROOT = "https://passwords.bithole.dev";
-//const API_ROOT = "http://localhost"
-const syncEndpoint = new URL("/vault/sync", API_ROOT),
-      createEndpoint = new URL("/vault/create", API_ROOT);
+const API_BASE = "https://passwords.bithole.dev";
+const syncEndpoint = new URL("/vault/sync", API_BASE),
+      createEndpoint = new URL("/vault/create", API_BASE);
 
 // elements
 const unlockForm = document.getElementById("unlock-form"),
@@ -324,14 +323,16 @@ const addEntry = entry => {
     deleteLinkOuter.append(deleteLink);
     elem.append(deleteLinkOuter);
 
-    copyLink.addEventListener("click", () => {
+    copyLink.addEventListener("click", event => {
         copyLink.style.animationName = "";
         navigator.clipboard.writeText(entry.password).then(() => {
             copyLink.style.animationName = "pulse-green";
         });
+        event.preventDefault();
+        return false;
     });
 
-    editLink.addEventListener("click", () => {
+    editLink.addEventListener("click", event => {
         editingEntry = entry;
         entryName.value = entry.name;
         entryUsername.value = entry.username;
@@ -339,9 +340,11 @@ const addEntry = entry => {
         entryPassword.value = entry.password;
         entryUrl.value = entry.url;
         editorDialog.showModal();
+        event.preventDefault();
+        return false;
     });
 
-    deleteLink.addEventListener("click", () => {
+    deleteLink.addEventListener("click", event => {
         if(prompt(`You are about to delete a saved password. This cannot be undone. Please retype "${entry.name}" to confirm your choice.`) != entry.name) {
             return;
         }
@@ -349,6 +352,8 @@ const addEntry = entry => {
         tableEntries.delete(entry);
         elem.remove();
         commit();
+        event.preventDefault();
+        return false;
     });
 
 };
@@ -443,3 +448,5 @@ editorForm.addEventListener("submit", event => {
     return false;
 
 });
+
+navigator.serviceWorker.register("serviceworker.js")
