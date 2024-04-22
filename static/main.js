@@ -1,4 +1,5 @@
 const API_BASE = "https://passwords.bithole.dev";
+//const API_BASE = "http://localhost";
 const syncEndpoint = new URL("/vault/sync", API_BASE),
       createEndpoint = new URL("/vault/create", API_BASE);
 
@@ -14,7 +15,8 @@ const unlockForm = document.getElementById("unlock-form"),
       entryUsername = document.getElementById("entry-username"),
       entryEmail = document.getElementById("entry-email"),
       entryPassword = document.getElementById("entry-password"),
-      entryUrl = document.getElementById("entry-url");
+      entryUrl = document.getElementById("entry-url"),
+      entryHidden = document.getElementById("entry-hidden");
 
 const base64ToArrayBuf = base64 => Uint8Array.from(atob(base64), char => char.charCodeAt(0)).buffer;
 const arrayBufToBase64 = buf => btoa(Array.prototype.map.call(new Uint8Array(buf), byte => String.fromCharCode(byte)).join(""));
@@ -291,13 +293,16 @@ const refreshOrder = () => {
 const addEntry = entry => {
     
     const elem = document.createElement("div");
+    if(entry.hidden) {
+        elem.classList.add("hidden");
+    }
     tableEntries.set(entry, elem);
     passwordsTable.append(elem);
 
     const serviceIconOuter = document.createElement("div");
     serviceIconOuter.classList.add("service-icon");
     const serviceIcon = document.createElement("img");
-    serviceIcon.src = `https://s2.googleusercontent.com/s2/favicons?domain_url=${encodeURIComponent(entry.url)}`;
+    serviceIcon.src = `https://s2.googleusercontent.com/s2/favicons?domain_url=${encodeURIComponent(entry.url)}&sz=32`;
     serviceIconOuter.append(serviceIcon);
     elem.append(serviceIconOuter);
 
@@ -346,6 +351,7 @@ const addEntry = entry => {
         entryEmail.value = entry.email;
         entryPassword.value = entry.password;
         entryUrl.value = entry.url;
+        entryHidden.checked = entry.hidden;
         editorDialog.showModal();
         event.preventDefault();
         return false;
@@ -430,9 +436,15 @@ editorForm.addEventListener("submit", event => {
         editingEntry.email = entryEmail.value;
         editingEntry.password = entryPassword.value;
         editingEntry.url = url;
+        editingEntry.hidden = entryHidden.checked;
         editingEntry.timestamp = Date.now();
         const entryElement = tableEntries.get(editingEntry);
         entryElement.querySelector(".service-name").textContent = entryName.value;
+        if(editingEntry.hidden) {
+            entryElement.classList.add("hidden");
+        } else {
+            entryElement.classList.remove("hidden");
+        }
     } else {
         const newEntry = {
             name: entryName.value,
@@ -440,6 +452,7 @@ editorForm.addEventListener("submit", event => {
             email: entryEmail.value,
             password: entryPassword.value,
             url,
+            hidden: entryHidden.checked,
             timestamp: Date.now()
         }; 
         vault.content.entries.push(newEntry);
@@ -454,6 +467,10 @@ editorForm.addEventListener("submit", event => {
 
     return false;
 
+});
+
+document.getElementById("passwords-header").addEventListener("click", () => {
+    passwordsTable.classList.toggle("showhidden");
 });
 
 navigator.serviceWorker.register("serviceworker.js")

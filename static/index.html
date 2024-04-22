@@ -18,7 +18,7 @@
         <div id="vault-view" style="display: none">
             <p id="save-error"></p>
             <p style="display: flex; flex-direction: row;">
-                <span style="flex-grow: 1; font-weight: bold;">passwords</span>
+                <span style="flex-grow: 1; font-weight: bold;" id="passwords-header">passwords</span>
                 <span><a id="add-link" href="#">+ add</a></span>
             </p>
             <div id="passwords-table"></div>
@@ -38,6 +38,9 @@
                 </div>
                 <label for="entry-url">URL</label>
                 <input type="text" id="entry-url">
+                <p style="margin-top: 0">
+                    <input type="checkbox" id="entry-hidden"> <label for="entry-hidden">Hidden</label>
+                </p>
                 <button type="submit">Save</button> <button id="entry-cancel">Cancel</button>
             </form>
         </dialog>

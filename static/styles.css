@@ -31,6 +31,14 @@ body {
     padding: 0.3em 0;
 }
 
+#passwords-table .hidden {
+    display: none;
+}
+
+#passwords-table.showhidden .hidden {
+    display: flex;
+}
+
 #passwords-table > div:hover {
     background-color: rgba(0, 0, 0, 5%);
 }
