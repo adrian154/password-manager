@@ -75,3 +75,14 @@ body {
 a, a:visited {
     color: #0000ff;
 }
+
+.service-icon {
+    display: flex;
+    margin-right: 0.5em;
+}
+
+.service-icon img {
+    margin: auto;
+    width: 16px;
+    height: 16px;
+}

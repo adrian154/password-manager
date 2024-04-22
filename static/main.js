@@ -294,6 +294,13 @@ const addEntry = entry => {
     tableEntries.set(entry, elem);
     passwordsTable.append(elem);
 
+    const serviceIconOuter = document.createElement("div");
+    serviceIconOuter.classList.add("service-icon");
+    const serviceIcon = document.createElement("img");
+    serviceIcon.src = `https://s2.googleusercontent.com/s2/favicons?domain_url=${encodeURIComponent(entry.url)}`;
+    serviceIconOuter.append(serviceIcon);
+    elem.append(serviceIconOuter);
+
     const serviceName = document.createElement("span");
     serviceName.classList.add("service-name");
     serviceName.textContent = entry.name;
