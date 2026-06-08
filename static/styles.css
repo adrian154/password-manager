@@ -2,6 +2,7 @@ body {
     max-width: 30em;
     margin: auto;
     padding: 1em;
+    font-family: sans-serif;
 }
 
 #unlock-error, #save-error {
@@ -28,7 +29,8 @@ body {
 #passwords-table > div {
     display: flex;
     flex-direction: row;
-    padding: 0.3em 0;
+    padding: 0.5em;
+    border-radius: 5px;
 }
 
 #passwords-table .hidden {
@@ -67,9 +69,12 @@ body {
 #editor {
     max-width: 20em;
     border: none;
+    border-radius: 5px;
+    padding: 1.5em;
 }
 
-#editor input[type="text"] {
+#editor input[type="text"],
+#editor input[type="email"] {
     width: 100%;
     margin-bottom: 1em;
     box-sizing: border-box;

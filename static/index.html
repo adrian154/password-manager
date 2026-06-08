@@ -13,7 +13,7 @@
             <input type="text" id="username" placeholder="Username..." required>
             <input type="password" id="password" placeholder="Password..." required>
             <input type="checkbox" id="create-new"> <label for="create-new">Create new vault</label><br><br>
-            <button type="submit">Unlock</button>
+            <button type="submit" id="unlock-button">Unlock</button>
         </form>
         <div id="vault-view" style="display: none">
             <p id="save-error"></p>
@@ -25,12 +25,12 @@
         </div>
         <dialog id="editor">
             <form id="editor-form">
-                <label for="entry-name">Name</label>
+                <label for="entry-name">Entry Name</label>
                 <input type="text" id="entry-name" required>
                 <label for="entry-username">Username</label>
                 <input type="text" id="entry-username">
                 <label for="entry-email">Email</label>
-                <input type="text" id="entry-email">
+                <input type="email" id="entry-email">
                 <label for="entry-password">Password</label>
                 <div style="display: flex; flex-direction: row; margin-bottom: 1em;">
                     <input type="password" id="entry-password" style="flex-grow: 1; margin-right: 0.5em;" required>

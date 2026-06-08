@@ -1,11 +1,12 @@
-const API_BASE = "https://passwords.bithole.dev";
-//const API_BASE = "http://localhost";
+const API_BASE = window.location.host == "localhost" ? "http://localhost" : "https://passwords.bithole.dev";
+
 const syncEndpoint = new URL("/vault/sync", API_BASE),
       createEndpoint = new URL("/vault/create", API_BASE);
 
 // elements
 const unlockForm = document.getElementById("unlock-form"),
-      unlockError = document.getElementById("unlock-error"),
+      unlockError = document.getElementById("unlock-error")
+      unlockButton = document.getElementById("unlock-button"),
       saveError = document.getElementById("save-error"),
       vaultView = document.getElementById("vault-view"),
       passwordsTable = document.getElementById("passwords-table"),
@@ -244,6 +245,9 @@ unlockForm.addEventListener("submit", async event => {
     // keep page from reloading
     event.preventDefault();
 
+    // disable button while working
+    unlockButton.disabled = true;
+
     username = document.getElementById("username").value;
 
     // derive master key from password
@@ -272,6 +276,7 @@ unlockForm.addEventListener("submit", async event => {
 
     initializeVault();
     unlockForm.reset();
+    unlockButton.disabled = false;
     return false;
 
 });
@@ -302,7 +307,7 @@ const addEntry = entry => {
     const serviceIconOuter = document.createElement("div");
     serviceIconOuter.classList.add("service-icon");
     const serviceIcon = document.createElement("img");
-    serviceIcon.src = `https://s2.googleusercontent.com/s2/favicons?domain_url=${encodeURIComponent(entry.url)}&sz=32`;
+    serviceIcon.src = `https://s2.googleusercontent.com/s2/favicons?domain_url=${encodeURIComponent(entry.url)}&sz=64`;
     serviceIconOuter.append(serviceIcon);
     elem.append(serviceIconOuter);
 
