@@ -17,7 +17,7 @@ const unlockForm = document.getElementById("unlock-form"),
       entryEmail = document.getElementById("entry-email"),
       entryPassword = document.getElementById("entry-password"),
       entryUrl = document.getElementById("entry-url"),
-      entryHidden = document.getElementById("entry-hidden");
+      searchField = document.getElementById("search");
 
 const base64ToArrayBuf = base64 => Uint8Array.from(atob(base64), char => char.charCodeAt(0)).buffer;
 const arrayBufToBase64 = buf => btoa(Array.prototype.map.call(new Uint8Array(buf), byte => String.fromCharCode(byte)).join(""));
@@ -298,9 +298,6 @@ const refreshOrder = () => {
 const addEntry = entry => {
     
     const elem = document.createElement("div");
-    if(entry.hidden) {
-        elem.classList.add("hidden");
-    }
     tableEntries.set(entry, elem);
     passwordsTable.append(elem);
 
@@ -356,7 +353,6 @@ const addEntry = entry => {
         entryEmail.value = entry.email;
         entryPassword.value = entry.password;
         entryUrl.value = entry.url;
-        entryHidden.checked = entry.hidden;
         editorDialog.showModal();
         event.preventDefault();
         return false;
@@ -384,7 +380,7 @@ editorDialog.addEventListener("close", () => {
     editingEntry = null;
 });
 
-document.getElementById("add-link").addEventListener("click", () => {
+document.getElementById("add-button").addEventListener("click", () => {
     editorDialog.showModal();
 });
 
@@ -396,16 +392,25 @@ document.getElementById("entry-cancel").addEventListener("click", () => {
 
 document.getElementById("autogen-password").addEventListener("click", () => {
 
+    // determine the correct alphabet
+    let alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+    if(document.getElementById("symbols").checked) {
+        alphabet += "_!@#$%^&*<>?";
+    }
+    if(document.getElementById("capitals").checked) {
+        alphabet += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    }
+    const spaces = document.getElementById("spaces").checked;
+
     let password = "";
-    const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
     const randomValues = new Uint32Array(16);
     window.crypto.getRandomValues(randomValues);
 
     for(let i = 0; i < 4; i++) {
         for(let j = 0; j < 4; j++) {
-            password += alphabet[randomValues[i*4+j] % 36];
+            password += alphabet[randomValues[i*4+j] % alphabet.length];
         }
-        if(i < 3)
+        if(i < 3 && spaces)
             password += " ";
     }
 
@@ -441,15 +446,9 @@ editorForm.addEventListener("submit", event => {
         editingEntry.email = entryEmail.value;
         editingEntry.password = entryPassword.value;
         editingEntry.url = url;
-        editingEntry.hidden = entryHidden.checked;
         editingEntry.timestamp = Date.now();
         const entryElement = tableEntries.get(editingEntry);
         entryElement.querySelector(".service-name").textContent = entryName.value;
-        if(editingEntry.hidden) {
-            entryElement.classList.add("hidden");
-        } else {
-            entryElement.classList.remove("hidden");
-        }
     } else {
         const newEntry = {
             name: entryName.value,
@@ -457,7 +456,6 @@ editorForm.addEventListener("submit", event => {
             email: entryEmail.value,
             password: entryPassword.value,
             url,
-            hidden: entryHidden.checked,
             timestamp: Date.now()
         }; 
         vault.content.entries.push(newEntry);
@@ -474,8 +472,20 @@ editorForm.addEventListener("submit", event => {
 
 });
 
-document.getElementById("passwords-header").addEventListener("click", () => {
-    passwordsTable.classList.toggle("showhidden");
+// search logic
+searchField.addEventListener("input", () => {
+    for(const [entry, elem] of tableEntries.entries()) {
+        if(searchField.value == "") {
+            elem.style.display = "";
+        } else {
+            if(entry.name.toLowerCase().includes(searchField.value.toLowerCase())) {
+                elem.style.display = "";
+            } else {
+                elem.style.display = "none";
+            }
+        }
+    }
 });
 
+// add service worker for PWA
 navigator.serviceWorker.register("serviceworker.js")

@@ -18,8 +18,8 @@
         <div id="vault-view" style="display: none">
             <p id="save-error"></p>
             <p style="display: flex; flex-direction: row;">
-                <span style="flex-grow: 1; font-weight: bold;" id="passwords-header">passwords</span>
-                <span><a id="add-link" href="#">+ add</a></span>
+                <input type="text" id="search" placeholder="Search..." style="flex-grow: 1; margin: 0; margin-right: 0.5em;">
+                <button id="add-button" class="button-blue" style="width: 5em">+ Add</button>
             </p>
             <div id="passwords-table"></div>
         </div>
@@ -32,16 +32,20 @@
                 <label for="entry-email">Email</label>
                 <input type="email" id="entry-email">
                 <label for="entry-password">Password</label>
-                <div style="display: flex; flex-direction: row; margin-bottom: 1em;">
-                    <input type="password" id="entry-password" style="flex-grow: 1; margin-right: 0.5em;" required>
-                    <button id="autogen-password" type="button">Generate</button>
+                <div style="margin-bottom: 1em;">
+                    <div style="display: flex; flex-direction: row; margin-bottom: 0.5em">
+                        <input type="password" id="entry-password" style="flex-grow: 1; margin: 0; margin-right: 0.5em;" required>
+                        <button id="autogen-password" type="button">Generate</button>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="spaces" checked><label for="spaces">spaces</label>
+                        <input type="checkbox" id="symbols"><label for="symbols">symbols</label>
+                        <input type="checkbox" id="capitals"><label for="capitals">capitals</label>
+                    </div>
                 </div>
                 <label for="entry-url">URL</label>
                 <input type="text" id="entry-url">
-                <p style="margin-top: 0">
-                    <input type="checkbox" id="entry-hidden"> <label for="entry-hidden">Hidden</label>
-                </p>
-                <button type="submit">Save</button> <button id="entry-cancel">Cancel</button>
+                <button type="submit" class="button-blue">Save</button> <button id="entry-cancel">Cancel</button>
             </form>
         </dialog>
         <script src="main.js"></script>

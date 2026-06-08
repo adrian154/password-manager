@@ -1,8 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+    --button-blue: #0e7ceb;
+    --button-blue-hover: #0c69c7;
+}
+
 body {
     max-width: 30em;
     margin: auto;
     padding: 1em;
-    font-family: sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 #unlock-error, #save-error {
@@ -14,12 +21,6 @@ body {
     display: none;
 }
 
-#username, #password {
-    width: 100%;
-    margin: 0.5em 0;
-    padding: 0.5em;
-    box-sizing: border-box;
-}
 
 #passwords-table {
     display: flex;
@@ -67,17 +68,20 @@ body {
 }
 
 #editor {
-    max-width: 20em;
+    max-width: 25em;
     border: none;
     border-radius: 5px;
     padding: 1.5em;
 }
 
-#editor input[type="text"],
-#editor input[type="email"] {
+input[type="text"],
+input[type="email"],
+input[type="password"] {
     width: 100%;
-    margin-bottom: 1em;
+    margin: 0.5em 0;
+    padding: 0.5em;
     box-sizing: border-box;
+    margin-bottom: 1em;
 }
 
 #editor::backdrop {
@@ -98,4 +102,24 @@ a, a:visited {
     margin: auto;
     width: 16px;
     height: 16px;
+}
+
+button {
+    border-radius: 5px;
+    border: 1px solid #888888;
+    font-weight: 500;
+    font-size: 11pt;
+    padding: 0.5em 0.7em;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.button-blue {
+    border: none;
+    background-color: var(--button-blue);
+    color: #ffffff;
+}
+
+.button-blue:hover {
+    background-color: var(--button-blue-hover);
 }
